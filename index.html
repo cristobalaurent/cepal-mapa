@@ -34,7 +34,7 @@
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // 3) Tus datos de ejemplo (puedes extenderlo con todos tus programas)
+    // 3) Tus datos de ejemplo
     const programas = {
       "type": "FeatureCollection",
       "features": [
@@ -65,17 +65,16 @@
       ]
     };
 
-    // 4) Añade los marcadores y pop‑ups
+    // 4) Añade marcadores y pop‑ups
     L.geoJSON(programas, {
-      pointToLayer: (feature, latlng) =>
-        L.marker(latlng),
-      onEachFeature: (feature, layer) => {
-        const p = feature.properties;
-        layer.bindPopup(
-          `<h3>${p.nombre}</h3>
-           <p>${p.descripcion}</p>
-           <p><a href="${p.link}" target="_blank">Ver más →</a></p>`
-        );
+      pointToLayer: (f, latlng) => L.marker(latlng),
+      onEachFeature: (f, layer) => {
+        const p = f.properties;
+        layer.bindPopup(`
+          <h3>${p.nombre}</h3>
+          <p>${p.descripcion}</p>
+          <p><a href="${p.link}" target="_blank">Ver más →</a></p>
+        `);
       }
     }).addTo(map);
   </script>
