@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Mapa CEPAL — Programas</title>
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-o9N1j+z1PkxgAtM0rSHt8uKdX1Jw/XNucq+QC6QwJpI="
+    crossorigin=""
+  />
+  <style>
+    html, body { margin:0; padding:0; height:100%; }
+    #map { width:100%; height:100%; }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <!-- Leaflet JS -->
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-kxZj5b6DywQJk8fyd0pgyS0pHv5ejYvB1GMjFBXtmYQ="
+    crossorigin=""
+  ></script>
+  <script>
+    // 1) Inicializa el mapa centrado en Santiago
+    const map = L.map('map').setView([-33.45, -70.65], 4);
+
+    // 2) Capa base OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // 3) Tus datos de ejemplo (puedes extenderlo con todos tus programas)
+    const programas = {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "properties": {
+            "nombre": "El municipio de Irapuato",
+            "descripcion": "En un municipio de México se creó un ecosistema digital que permite a las autoridades monitorear en tiempo real los procesos administrativos clave, facilitando decisiones informadas y promoviendo una gestión pública más transparente y eficiente.",
+            "link": "https://app.powerbi.com/view?r=eyJrIjoiZTVjYzhkOGUtNWE0YS00ZmFiLWE3YTYtYjIwNzAxNDczMGM3IiwidCI6IjY5NjJhNWZlLTliMTYtNGQzZi04NDc1LTMyNjE2NzZlZDljZCJ9"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [-101.3467, 20.6717]
+          }
+        },
+        {
+          "type": "Feature",
+          "properties": {
+            "nombre": "Municipalidad de San Joaquín",
+            "descripcion": "Busca rendir cuentas a los vecinos/as de la comuna, publicando el presupuesto municipal y su ejecución, promoviendo la transparencia y la fiscalización ciudadana. Puede revisar un video explicativo de esta plataforma en la cuenta de Instagram de la municipalidad.",
+            "link": "https://sanjoaquin.cl/presupuesto-transparente-san-joaquin/"
+          },
+          "geometry": {
+            "type": "Point",
+            "coordinates": [-70.6413, -33.4792]
+          }
+        }
+      ]
+    };
+
+    // 4) Añade los marcadores y pop‑ups
+    L.geoJSON(programas, {
+      pointToLayer: (feature, latlng) =>
+        L.marker(latlng),
+      onEachFeature: (feature, layer) => {
+        const p = feature.properties;
+        layer.bindPopup(
+          `<h3>${p.nombre}</h3>
+           <p>${p.descripcion}</p>
+           <p><a href="${p.link}" target="_blank">Ver más →</a></p>`
+        );
+      }
+    }).addTo(map);
+  </script>
+</body>
+</html>
