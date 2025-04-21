@@ -11,16 +11,19 @@
   <style>
     body, html { margin:0; padding:0; height:100%; }
     #map { position:absolute; top:0; bottom:0; width:100%; }
-    /* Oculta logo y atribución si lo deseas */
+    /* Oculta logo y atribución (opcional) */
     .mapboxgl-ctrl-logo,
     .mapboxgl-ctrl-attrib { display: none !important; }
   </style>
 </head>
 <body>
   <div id="map"></div>
+
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
   <script>
+    // Tu token público de Mapbox
     mapboxgl.accessToken = 'pk.eyJ1IjoiY2xhdXJlbnQiLCJhIjoiY205cmVuZHd6MXlhODJqcTd6ZWN5MnBldSJ9.vuX9nx9RYyysVEplpTUexQ';
+
     const map = new mapboxgl.Map({
       container: 'map',
       style: 'mapbox://styles/claurent/cm9repwlz00t701s505t11jdv',
@@ -28,9 +31,18 @@
       zoom: 4,
       attributionControl: false
     });
+
+    // Agrega controles de zoom
     map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
     map.on('load', () => {
-      map.addSource('programas', { type: 'vector', url: 'mapbox://claurent.programas-cepal' });
+      // Fuente vectorial con tus programas
+      map.addSource('programas', {
+        type: 'vector',
+        url: 'mapbox://claurent.programas-cepal'
+      });
+
+      // Capa de símbolos (punteros)
       map.addLayer({
         id: 'programas-pins',
         type: 'symbol',
@@ -43,14 +55,26 @@
           'icon-allow-overlap': true
         }
       });
+
+      // Pop‑ups al hacer clic en un puntero
       map.on('click', 'programas-pins', (e) => {
         const p = e.features[0].properties;
-        new mapboxgl.Popup({ offset: [0,-10] })
+        new mapboxgl.Popup({ offset: [0, -10] })
           .setLngLat(e.lngLat)
-          .setHTML(
-            `<h3>${p.nombre}</h3><p>${p.descripcion}</p>` +
-            `<p><a href="${p.link}" target="_blank">Ver más →</a></p>`
-          ).addTo(map);
+          .setHTML(`
+            <h3 style="margin:0;">${p.nombre}</h3>
+            <p style="margin:0.5em 0;">${p.descripcion}</p>
+            <p style="margin:0;"><a href="${p.link}" target="_blank">Ver más →</a></p>
+          `)
+          .addTo(map);
+      });
+
+      // Cursor puntero en hover
+      map.on('mouseenter', 'programas-pins', () => {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+      map.on('mouseleave', 'programas-pins', () => {
+        map.getCanvas().style.cursor = '';
       });
     });
   </script>
