@@ -4,59 +4,64 @@
   <meta charset="utf-8">
   <title>Mapa CEPAL — Programas</title>
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+  <!-- Carga el CSS de Mapbox GL JS -->
   <link
     href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css"
     rel="stylesheet"
   />
   <style>
+    /* Asegura que el mapa ocupe toda la pantalla */
     body, html { margin:0; padding:0; height:100%; }
     #map { position:absolute; top:0; bottom:0; width:100%; }
-    /* Oculta logo y atribución (opcional) */
+    /* (Opcional) Oculta el logo y la atribución de Mapbox */
     .mapboxgl-ctrl-logo,
     .mapboxgl-ctrl-attrib { display: none !important; }
   </style>
 </head>
 <body>
+  <!-- Contenedor donde se renderiza el mapa -->
   <div id="map"></div>
 
+  <!-- Carga la librería Mapbox GL JS -->
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
   <script>
-    // Tu token público de Mapbox
+    // 1) Tu token de acceso público de Mapbox
     mapboxgl.accessToken = 'pk.eyJ1IjoiY2xhdXJlbnQiLCJhIjoiY205cmVuZHd6MXlhODJqcTd6ZWN5MnBldSJ9.vuX9nx9RYyysVEplpTUexQ';
 
+    // 2) Inicializa el mapa
     const map = new mapboxgl.Map({
       container: 'map',
-      style: 'mapbox://styles/claurent/cm9repwlz00t701s505t11jdv',
-      center: [-70.65, -33.45],
+      style: 'mapbox://styles/claurent/cm9repwlz00t701s505t11jdv', // tu Style URL
+      center: [-70.65, -33.45],  // Santiago aprox.
       zoom: 4,
-      attributionControl: false
+      attributionControl: false   // quita el control de atribución por defecto
     });
 
-    // Agrega controles de zoom
+    // 3) Agrega controles de zoom en la esquina superior derecha
     map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
     map.on('load', () => {
-      // Fuente vectorial con tus programas
+      // 4) Agrega la fuente vectorial con tu tileset
       map.addSource('programas', {
         type: 'vector',
-        url: 'mapbox://claurent.programas-cepal'
+        url: 'mapbox://claurent.programas-cepal'  // tu Tileset ID
       });
 
-      // Capa de símbolos (punteros)
+      // 5) Dibuja tus punteros usando un Symbol layer
       map.addLayer({
         id: 'programas-pins',
         type: 'symbol',
         source: 'programas',
-        'source-layer': 'data',
+        'source-layer': 'data',  // nombre de la capa dentro del tileset
         layout: {
-          'icon-image': 'pin-svgrepo-com',
+          'icon-image': 'pin-svgrepo-com', // nombre del icono subido
           'icon-size': 1.3,
           'icon-offset': [0, -10],
           'icon-allow-overlap': true
         }
       });
 
-      // Pop‑ups al hacer clic en un puntero
+      // 6) Pop‑ups al hacer clic en un puntero
       map.on('click', 'programas-pins', (e) => {
         const p = e.features[0].properties;
         new mapboxgl.Popup({ offset: [0, -10] })
@@ -69,7 +74,7 @@
           .addTo(map);
       });
 
-      // Cursor puntero en hover
+      // 7) Cambia el cursor al pasar sobre un puntero
       map.on('mouseenter', 'programas-pins', () => {
         map.getCanvas().style.cursor = 'pointer';
       });
